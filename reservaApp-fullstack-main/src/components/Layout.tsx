@@ -24,12 +24,18 @@ export const Layout = () => {
           <div className="flex gap-6 items-center">
             {/*Enlaces o pestañas de navegacion dentro del layout*/}
 
-
             <Link to="/reservas" className="hover:text-blue-300 transition">
-              Modulo Reservas
+              Panel Administrador
             </Link>
 
-        {/*     <Link to="/documentos" className="hover:text-blue-300 transition">
+            <Link to="/estado" className="hover:text-blue-300 transition">
+              Estado  Mesas
+            </Link>
+
+            <Link to="/lista" >Lista Reservas
+            </Link>
+
+        {/* <Link to="/documentos" className="hover:text-blue-300 transition">
               Documentos
             </Link> */}
           </div>
@@ -50,7 +56,7 @@ export const Layout = () => {
         </div>
       </nav>
       {/* Contenido principal de la aplicación */}
-      <main className="p-6">
+      <main className="p-6 ">
         <Outlet />
       </main>
     </div>

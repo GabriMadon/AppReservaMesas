@@ -35,7 +35,8 @@ router.post('/', (req, res) => {
     date,
     time,
     tableId,
-    status: 'Activa'
+    status: 'Pendiente',
+
   };
 
   reservas.push(nuevaReserva);

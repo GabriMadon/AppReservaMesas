@@ -18,6 +18,7 @@ function Reservas() {
     try {
       const data = await obtenerReservas();
       setReserva(data);
+      console.log("Reservas obtenidas :", data);
     } catch (error) {
       console.error("Error al obtener las reservas:", error);
     }
@@ -28,7 +29,7 @@ function Reservas() {
     cargarReservas(); //Ejecuta la función cargarMensajes() al montar el componente
   }, []);
 
-  // Funciones para abrir y cerrar el modal
+  // Funciones para abrir y cerrar el modal y cargar datos por default
   const abrirModal = (datosParciales?: Partial<ReservaForm>) => {
     const base: ReservaForm = {
       id: 0,
@@ -38,7 +39,7 @@ function Reservas() {
       date: "",
       time: "",
       tableId: "",
-      status: "Activa",
+      status: "Pendiente",
       ...datosParciales, // sobrescribe con lo que le pases, como { tableId: 'M2' }
     };
 
@@ -78,20 +79,16 @@ function Reservas() {
 
   return (
     <div className="max-w-4xl mx-auto px-4">
-      {/*     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
-        <h1 className="text-xl sm:text-2xl font-bold text-gray-800">
-          Módulo Reservas
-        </h1>
-        <button
-          onClick={() => abrirModal({})}
-          className="flex items-center gap-2 bg-yellow-600 text-white px-4 py-2 rounded-xl hover:bg-green-700 transition"
-        >
-          <FiPlus />
-          Agregar Reserva
-        </button>
-      </div> */}
+      <h2 className="text-center text-2xl font-bold mb-4">
+        Panel de Administrador
+      </h2>
+      <h3 className="text-left text-emerald-400 text-xl font-bold mb-3">
+        {" "}
+        Seleccione una Mesa
+      </h3>
 
       {/* gfrilla para mostrar mesas  */}
+      {/* // Sección de mesas */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
         {["M1", "M2", "M3", "M4", "M5", "M6"].map((mesa) => (
           <button
@@ -106,7 +103,7 @@ function Reservas() {
           </button>
         ))}
       </div>
-
+      {/* //tabla para mostrar reservas */}
       <div className="overflow-x-auto">
         <table className="w-full table-auto border bg-white border-gray-300 mt-4 rounded-xl shadow">
           <thead>
@@ -120,14 +117,11 @@ function Reservas() {
               <th className="p-2 text-center">Mesa</th>
               <th className="p-2 text-center">Estado</th>
               <th className="p-2 text-center">
-                
                 <div className="flex items-center justify-center gap-1">
-                    <FiSettings  />
-                    <span>Opciones</span>
-
+                  <FiSettings />
+                  <span>Opciones</span>
                 </div>
-               
-                </th>
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -162,10 +156,13 @@ function Reservas() {
           </tbody>
         </table>
       </div>
-      {/*Renderiza el Modal para agregar un nuevo contacto */}
-
+      {/*Renderiza el Modal  */}
       {mostrarModal && (
-        <ModalReservas onClose={cerrarModal} reservas={reservaEditar} />
+        <ModalReservas
+          onClose={cerrarModal}
+          reservas={reservaEditar}
+          todasLasReservas={reserva}
+        />
       )}
       <ToastContainer />
     </div>

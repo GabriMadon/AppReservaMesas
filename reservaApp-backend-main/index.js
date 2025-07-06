@@ -15,6 +15,6 @@ app.use('/api/login', authRoutes);
 
 app.use('/api/reservas', reservasRoutes); // Usar las rutas de reservas
 
-app.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Servidor corriendo en http://192.168.18.4:${PORT}`);
 });
