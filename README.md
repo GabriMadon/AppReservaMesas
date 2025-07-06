@@ -1,4 +1,4 @@
-🍽️ Sistema de Reservas de Mesas
+🍽️ Sistema de Reservas de Mesas Aplicacion Web y Movil 
 Este proyecto permite gestionar reservas en un restaurante mediante una interfaz visual interactiva. Las mesas se representan como íconos, y los usuarios pueden crear o editar reservas desde cada mesa específica.
 
 🚀 Funcionalidades
@@ -23,4 +23,9 @@ React Icons
 
 React Toastify
 
+React Native
+
 Backend REST API (conectado vía reservas.service.ts)
+
+App bwe y movile Para iniciar Sesión: email: admin@reservas.com - password: 123456
+
