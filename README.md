@@ -12,6 +12,12 @@ Modal con campos prellenados según la acción realizada.
 
 Notificaciones automáticas con react-toastify.
 
+Modulos
+Modulo Login
+Modulo Panel Admin (Control total de la app)
+Modulo Estado de Reservas: solo se muestra las reservas diarias, no las futuras
+Modulo Lista Reservas : Se muestra todas las reservas Diarias, futuras
+
 🛠️ Tecnologías utilizadas
 React + TypeScript
 
