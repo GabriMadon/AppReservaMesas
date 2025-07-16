@@ -2,9 +2,14 @@ import React, { useEffect, useState } from "react";
 import type { ReservaForm } from "../PanelAdmin/reservas.types";
 import { obtenerReservas } from "../PanelAdmin/reservas.service";
 
+const MESAS_KEY = "mesas_reservas_app";
+
 const EstadoReserva = () => {
   const [reservas, setReserva] = useState<ReservaForm[]>([]);
-  const mesas = ["M1", "M2", "M3", "M4", "M5", "M6"];
+  const [mesas, setMesas] = useState<string[]>(() => {
+  const saved = localStorage.getItem(MESAS_KEY);
+  return saved ? JSON.parse(saved) : ["M1", "M2", "M3", "M4", "M5", "M6"];
+});
 
   useEffect(() => {
     const cargarReservas = async () => {
