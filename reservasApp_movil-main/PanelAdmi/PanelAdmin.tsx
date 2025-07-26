@@ -21,7 +21,7 @@ export default function ReservasScreen() {
   const [reservaEditar, setReservaEditar] = useState<ReservaForm | null>(null);
 
   const [vistaActual, setVistaActual] = useState<"panel" | "estado" | "lista">("panel");
-
+  const [mesas, setMesas] = useState<string[]>(["M1", "M2", "M3", "M4", "M5", "M6"]);
 
   useEffect(() => {
     cargarReservas();
@@ -57,7 +57,7 @@ export default function ReservasScreen() {
     setMostrarModal(false);
     cargarReservas();
   };
-
+  /* funcion eliminar Reserva */
   const confirmarEliminacion = (id: number) => {
     Alert.alert("Confirmación", "¿Está seguro de eliminar la reserva?", [
       { text: "Cancelar", style: "cancel" },
@@ -78,7 +78,7 @@ export default function ReservasScreen() {
   return (
     <ScrollView contentContainerStyle={[styles.container, { paddingBottom: 60 }]}>
       <HeaderNav vistaActual={vistaActual} onCambiarVista={setVistaActual} />
-      
+
 
       {vistaActual === "panel" && (
         <>
@@ -90,20 +90,103 @@ export default function ReservasScreen() {
 
           <Text style={styles.subheader}>Seleccione una Mesa</Text>
 
-      {/*     <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 12 }}>Panel de Reservas</Text> */}
+          {/*     <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 12 }}>Panel de Reservas</Text> */}
+          {/* btn añadir mesa */}
+          <TouchableOpacity
+            onPress={() => {
+              // Extraer solo los números
+              const usados = mesas.map(m => parseInt(m.replace("M", "")));
+
+              // Buscar el número más alto
+              const max = Math.max(...usados);
+
+              // Generar nuevo número como siguiente disponible
+              let nuevoNumero = max + 1;
+              let nuevaMesa = `M${nuevoNumero}`;
+
+              // Asegurarse de que no se repita (por si hay huecos)
+              while (mesas.includes(nuevaMesa)) {
+                nuevoNumero++;
+                nuevaMesa = `M${nuevoNumero}`;
+              }
+
+              setMesas(prev => [...prev, nuevaMesa]);
+            }}
+            style={{ marginBottom: 12 }}
+          >
+
+            <Text style={{ backgroundColor: "#007AFF", color: "white", textAlign: "center", padding: 10, borderRadius: 6 }}>
+              ➕ Añadir Mesa
+            </Text>
+          </TouchableOpacity>
+
+          {/* gird mesa */}
           <View style={styles.grid}>
-            {["M1", "M2", "M3", "M4", "M5", "M6"].map((mesa) => (
-              <TouchableOpacity
-                key={mesa}
-                style={styles.mesaButton}
-                onPress={() => abrirModal({ tableId: mesa })}
-              >
-                <Text style={styles.icon}>🍽️</Text>
-                <Text>Mesa {mesa.replace("M", "")}</Text>
-              </TouchableOpacity>
+            {mesas.map((mesa) => (
+              <View key={mesa} style={styles.mesaWrapper}>
+                <View style={styles.mesaCard}>
+                  <TouchableOpacity
+                    style={styles.mesaButton}
+                    onPress={() => abrirModal({ tableId: mesa })}
+                  >
+                    <Text style={styles.icon}>🍽️</Text>
+                    <Text>Mesa {mesa.replace("M", "")}</Text>
+                  </TouchableOpacity>
+
+                </View>
+              </View>
             ))}
           </View>
 
+
+          <TouchableOpacity
+            onPress={() => {
+              const mesasDinamicas = mesas
+                .filter(m => parseInt(m.replace("M", "")) > 6)
+                .sort((a, b) => parseInt(b.replace("M", "")) - parseInt(a.replace("M", "")));
+
+              if (mesasDinamicas.length === 0) {
+                Alert.alert("Sin mesas dinámicas", "No hay mesas agregadas para eliminar.");
+                return;
+              }
+
+              const ultimaMesa = mesasDinamicas[0]; // mesa con el número más alto
+
+              // Crear un objeto que mapea mesaId a reservas
+              const reservasPorMesa: { [key: string]: ReservaForm[] } = {};
+              reserva.forEach(r => {
+                if (!reservasPorMesa[r.tableId]) reservasPorMesa[r.tableId] = [];
+                reservasPorMesa[r.tableId].push(r);
+              });
+
+              const reservasMesa = reservasPorMesa[ultimaMesa] ?? [];
+
+              if (reservasMesa.length > 0) {
+                Alert.alert(
+                  "Mesa con reservas",
+                  `No puedes eliminar la ${ultimaMesa} porque tiene ${reservasMesa.length} reserva(s) activa(s).`,
+                  [{ text: "OK" }]
+                );
+                return;
+              }
+
+              setMesas(prev => prev.filter(m => m !== ultimaMesa));
+
+            }}
+            style={{
+              backgroundColor: "#FF4136",
+              padding: 10,
+              borderRadius: 6,
+              marginBottom: 16,
+            }}
+          >
+            <Text style={{ color: "white", textAlign: "center", fontWeight: "bold" }}>
+              🗑️ Eliminar Última Mesa Añadida
+            </Text>
+          </TouchableOpacity>
+
+
+          {/* muestra las reservas realizadas podemos eliminar o modificar */}
           <View style={styles.listaReservas}>
             {reserva.map((m) => (
               <View key={m.id} style={styles.card}>
@@ -130,15 +213,17 @@ export default function ReservasScreen() {
         </>
       )}
 
+      {/* Vista Estado Reservas */}
       {vistaActual === "estado" && (
         <>
           <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 12 }}>Estado de las Mesas</Text>
-          {["M1", "M2", "M3", "M4", "M5", "M6"].map((mesaId) => (
+          {mesas.map((mesaId) => (
             <EstadoReserva key={mesaId} mesaId={mesaId} reservas={reserva} />
+
           ))}
         </>
       )}
-
+      {/* Vista Lista Reservas */}
       {vistaActual === "lista" && (
         <>
           <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 12 }}>Lista Reservas - Todas las Reservas</Text>
@@ -167,14 +252,40 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   mesaButton: {
-    width: "30%",
+    width: "100%",
     padding: 12,
     marginVertical: 8,
     borderWidth: 1,
     borderColor: "#888",
     borderRadius: 8,
     alignItems: "center",
+    /*     justifyContent: "center",
+        minHeight: 100, */
+
   },
+
+  mesaWrapper: {
+    width: "30%",
+    marginBottom: 12,
+
+
+  },
+
+  mesaCard: {
+    width: "100%",
+    alignItems: "center",
+  },
+
+  btnEliminarMesa: {
+    marginTop: 6,
+    backgroundColor: "#FF4136",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+  },
+
+
+
   icon: { fontSize: 32 },
   card: {
     padding: 12,
@@ -231,7 +342,5 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     backgroundColor: '#ffe0e0',
   },
-
-
 
 });
