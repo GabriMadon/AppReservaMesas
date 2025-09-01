@@ -1,8 +1,0 @@
-{
-    "editor.fontFamily": "Share Tech Mono, Consolas, 'Courier New', monospace",
-    "editor.fontSize": 16,
-    "editor.guides.bracketPairs": true,
-    "editor.bracketPairColorization.enabled": true,
-    "breadcrumbs.enabled": false,
-    "editor.cursorSmoothCaretAnimation": "on"
-}
